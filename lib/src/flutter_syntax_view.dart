@@ -8,6 +8,9 @@ class SyntaxView extends StatefulWidget {
       {required this.code,
       required this.syntax,
       this.syntaxTheme,
+      this.minWidth = 100,
+      this.minHeight = 100,
+      this.useCustomHeight = false,
       this.withZoom = true,
       this.withLinesCount = true,
       this.fontSize = 12.0,
@@ -31,6 +34,15 @@ class SyntaxView extends StatefulWidget {
   /// Font Size with a default value of 12.0
   final double fontSize;
 
+  // Use custom height and width for syntax view
+  final bool useCustomHeight;
+
+  /// Min width of the syntax view
+  final double? minWidth;
+
+  /// Min height of the syntax view
+  final double? minHeight;
+
   /// Expansion which allows the SyntaxView to be used inside a Column or a ListView... (default: false)
   final bool expanded;
 
@@ -48,19 +60,26 @@ class SyntaxViewState extends State<SyntaxView> {
   Widget build(BuildContext context) {
     return Stack(alignment: AlignmentDirectional.bottomEnd, children: <Widget>[
       Container(
-          padding: widget.withLinesCount
-              ? const EdgeInsets.only(left: 5, top: 10, right: 10, bottom: 10)
-              : const EdgeInsets.all(10),
-          color: widget.syntaxTheme!.backgroundColor,
-          constraints: widget.expanded ? BoxConstraints.expand() : null,
-          child: Scrollbar(
-              child: SingleChildScrollView(
-                  child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: widget.withLinesCount
-                          ? buildCodeWithLinesCount() // Syntax view with line number to the left
-                          : buildCode() // Syntax view
-                      )))),
+        constraints: widget.useCustomHeight
+            ? BoxConstraints(
+                minWidth: widget.minWidth as double,
+                minHeight: widget.minHeight as double)
+            : widget.expanded
+                ? BoxConstraints.expand()
+                : null,
+        padding: widget.withLinesCount
+            ? const EdgeInsets.only(left: 5, top: 10, right: 10, bottom: 10)
+            : const EdgeInsets.all(10),
+        color: widget.syntaxTheme!.backgroundColor,
+        child: Scrollbar(
+            child: SingleChildScrollView(
+                child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: widget.withLinesCount
+                        ? buildCodeWithLinesCount() // Syntax view with line number to the left
+                        : buildCode() // Syntax view
+                    ))),
+      ),
       if (widget.withZoom) zoomControls() // Zoom controll icons
     ]);
   }
