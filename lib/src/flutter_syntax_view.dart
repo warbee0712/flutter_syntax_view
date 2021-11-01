@@ -107,7 +107,6 @@ class SyntaxViewState extends State<SyntaxView> {
 
   Widget zoomControls() {
     return Row(
-      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         IconButton(
             icon:
